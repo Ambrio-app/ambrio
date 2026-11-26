@@ -43,14 +43,14 @@ dependencies:
   intl: ^0.20.3
   flutter_localizations:
     sdk: flutter
-  file_picker: ^13.4.0
+  file_picker: ^13.4.1
   archive: ^4.7.1
   xml: ^7.1.0
   http: ^1.6.0
   package_info_plus: ^10.2.2
   # Já vinha com o drift; declarado porque o backup abre o arquivo escolhido
   # para conferir que é um banco do Ambrio antes de restaurar.
-  sqlite3: ^3.9.1
+  sqlite3: ^3.9.2
   # Guarda a chave de IA do usuário no Keystore do Android (criptografada).
   flutter_secure_storage: ^11.2.0
   # Dicas ("coach marks") apontando para botões reais, na primeira visita a
