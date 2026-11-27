@@ -16,6 +16,7 @@
 - Um banco de dados local com as suas contas, cartões, lançamentos e configurações.
 - A chave do serviço de IA, no cofre de chaves do Android (Keystore), criptografada. Ela não entra no backup.
 - O backup que você mesmo salvar: um arquivo .sqlite sem criptografia. Quem pegar o arquivo lê tudo; guarde em um lugar seguro. Se você o salvar numa pasta de nuvem, ele sai do aparelho.
+- O relatório do mês que você mesmo gerar: um PDF feito no aparelho e salvo onde você escolher. Ele traz os totais do mês e, só se você ligar, a lista de lançamentos e os saldos; fica sem senha, então guarde ou envie com o mesmo cuidado do backup.
 
 ## O que sai do aparelho (só na importação com IA)
 
@@ -60,7 +61,7 @@ O Ambrio é um controle financeiro pessoal e não é dirigido a menores de 18 an
 
 ## Quem é o responsável e como falar
 
-Ambrio é um projeto de código aberto (licença MIT), sem fins lucrativos e sem anúncios. Para dúvidas, pedidos ou problemas de privacidade, abra uma issue em https://github.com/IziFnc/IziFnc/issues. Para falhas de segurança, use o relato privado de vulnerabilidade do repositório, para não expor o problema em público.
+Ambrio é um projeto de código aberto (licença MIT), sem fins lucrativos e sem anúncios. Para dúvidas, pedidos ou problemas de privacidade, abra uma issue em https://github.com/Ambrio-app/ambrio/issues. Para falhas de segurança, use o relato privado de vulnerabilidade do repositório, para não expor o problema em público.
 
 ## Mudanças neste texto
 

@@ -23,7 +23,7 @@ class ImportDoneStep extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(height: 16),
-            Text('$savedCount lançamento(s) importado(s).'),
+            Text(savedCount == 1 ? '1 lançamento importado.' : '$savedCount lançamentos importados.'),
             const SizedBox(height: 24),
             FilledButton(
               // `go`, não `pop`: a importação é aberta pelo menu (que troca a tela), então

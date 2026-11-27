@@ -5,12 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/database/repositories.dart';
 import '../../../core/utils/cents_input_formatter.dart';
+import '../../../core/utils/percent_input_formatter.dart';
 import '../../../core/utils/clock.dart';
 import '../../../core/utils/formatters.dart';
 import '../../accounts/presentation/account_label.dart';
 import '../../accounts/presentation/accounts_providers.dart';
 import '../data/entries_repository.dart';
 import '../domain/entry_type.dart';
+import '../domain/payment_rules.dart' show interestFromRate;
 import 'bill_payment_summary.dart';
 import 'entry_account_chips.dart';
 import 'entry_amount_field.dart';
@@ -76,7 +78,15 @@ class _BillPaymentScreenState extends ConsumerState<BillPaymentScreen> {
     super.dispose();
   }
 
-  int get _interestCents => CentsInputFormatter.parse(_interest.text);
+  /// Juros e encargos informados em R$ ou, no modo %, a taxa (em centésimos de ponto) sobre o em aberto.
+  bool _interestInPercent = false;
+
+  /// O em aberto da última montagem da tela: a base do juros em % (feat 0027).
+  int _open = 0;
+
+  int get _interestCents => _interestInPercent
+      ? interestFromRate(_open, PercentInputFormatter.parse(_interest.text))
+      : CentsInputFormatter.parse(_interest.text);
 
   Future<void> _pickDate() async {
     final picked = await pickEntryDate(context, _date);
@@ -161,6 +171,8 @@ class _BillPaymentScreenState extends ConsumerState<BillPaymentScreen> {
 
     final checking = accounts.where((a) => !a.kind.isCard).toList();
     final open = -(balances[card.id] ?? 0);
+    _open = open;
+    final rateBps = PercentInputFormatter.parse(_interest.text);
 
     // Valor já preenchido com o em aberto (uma vez), e a conta dona já escolhida.
     if (!_filled) {
@@ -221,16 +233,37 @@ class _BillPaymentScreenState extends ConsumerState<BillPaymentScreen> {
               onSelect: (id) => setState(() => _fromId = id),
             ),
             const SizedBox(height: 16),
+            // O banco informa a diferença em R$ ou em taxa (ex.: 2,5% ao mês): escolhe-se como digitar.
+            // Em %, a conta é sobre o em aberto, então só faz sentido com algo em aberto.
+            if (open > 0) ...[
+              SegmentedButton<bool>(
+                segments: const [
+                  ButtonSegment(value: false, label: Text('Juros em R\$')),
+                  ButtonSegment(value: true, label: Text('Juros em %')),
+                ],
+                selected: {_interestInPercent},
+                showSelectedIcon: false,
+                onSelectionChanged: (s) => setState(() {
+                  _interestInPercent = s.single;
+                  _interest.clear();
+                  _error = null;
+                }),
+              ),
+              const SizedBox(height: 12),
+            ],
             TextField(
               controller: _interest,
               keyboardType: TextInputType.number,
-              inputFormatters: [CentsInputFormatter()],
-              decoration: const InputDecoration(
-                label: Text('Juros e encargos desta fatura (opcional)', maxLines: 2),
-                hintText: 'R\$ 0,00',
-                helperText:
-                    'Se a fatura do banco veio maior que o em aberto no app, coloque aqui a '
-                    'diferença (juros, multa, IOF). Ela vira um gasto no cartão.',
+              inputFormatters: [if (_interestInPercent && open > 0) PercentInputFormatter() else CentsInputFormatter()],
+              decoration: InputDecoration(
+                label: const Text('Juros e encargos desta fatura (opcional)', maxLines: 2),
+                hintText: _interestInPercent && open > 0 ? '0,00 %' : 'R\$ 0,00',
+                helperText: _interestInPercent && open > 0
+                    ? (rateBps > 0
+                          ? '${PercentInputFormatter.label(rateBps)}% de ${Formatters.money(open)} em aberto = ${Formatters.money(_interestCents)}. Vira um gasto no cartão.'
+                          : 'A taxa do banco (ex.: 2,5% ao mês) sobre o que está em aberto. Vira um gasto no cartão.')
+                    : 'Se a fatura do banco veio maior que o em aberto no app, coloque aqui a '
+                          'diferença (juros, multa, IOF). Ela vira um gasto no cartão.',
                 helperMaxLines: 3,
               ),
               onChanged: (_) => setState(() => _error = null),

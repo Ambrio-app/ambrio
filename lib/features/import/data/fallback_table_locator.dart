@@ -71,7 +71,7 @@ class FallbackTableLocator implements LlmTableLocator {
       }
     }
     throw LlmLocatorException(
-      'Nenhum provedor conseguiu localizar as tabelas — ${failures.join(' · ')}',
+      'Nenhum provedor conseguiu localizar as tabelas: ${failures.join(' · ')}',
     );
   }
 

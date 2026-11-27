@@ -41,7 +41,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
       if (valor == null || banco == null) {
         errors.add(
           'Linha ${row.sheetRow} (gastos, fatura): faltou valor ou a '
-          'conta que pagou — ignorada.',
+          'conta que pagou; ignorada.',
         );
         return null;
       }
@@ -70,7 +70,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
       if (valor == null || banco == null || data == null) {
         errors.add(
           'Linha ${row.sheetRow} (gastos, transfer): faltou valor, '
-          'origem ou data — ignorada.',
+          'origem ou data; ignorada.',
         );
         return null;
       }
@@ -90,7 +90,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
     if (valor == null || banco == null || tipo == null) {
       errors.add(
         'Linha ${row.sheetRow} (gastos, "$nome"): '
-        'faltou valor, banco ou o Tipo não é Débito/Crédito — ignorada.',
+        'faltou valor, banco ou o Tipo não é Débito/Crédito; ignorada.',
       );
       return null;
     }
@@ -127,7 +127,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
       if (valor == null || banco == null) {
         errors.add(
           'Linha ${row.sheetRow} (entradas, transfer): faltou valor ou '
-          'conta — ignorada.',
+          'conta; ignorada.',
         );
         return null;
       }
@@ -145,7 +145,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
     if (isFaturaName(normalizedNome)) {
       errors.add(
         'Linha ${row.sheetRow} (entradas, fatura): pagamento de fatura '
-        'não é esperado nas entradas — ignorada.',
+        'não é esperado nas entradas; ignorada.',
       );
       return null;
     }
@@ -153,7 +153,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
     if (valor == null || banco == null) {
       errors.add(
         'Linha ${row.sheetRow} (entradas, "$nome"): '
-        'faltou valor ou banco — ignorada.',
+        'faltou valor ou banco; ignorada.',
       );
       return null;
     }
@@ -181,7 +181,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
   for (final m in mirrors.where((m) => !m.used)) {
     errors.add(
       'Linha ${m.sheetRow} (entradas, transfer): transferência recebida '
-      'sem saída correspondente nos gastos — ignorada.',
+      'sem saída correspondente nos gastos; ignorada.',
     );
   }
 
@@ -193,7 +193,7 @@ ParsedSheetData parseSheet(SpreadsheetTables tables) {
     for (final r in all.where((r) => r.undated)) {
       errors.add(
         'Linha ${r.sheetRow} ("${r.nome}"): sem data, e a aba não tem nenhuma '
-        'outra data para usar — ignorada.',
+        'outra data para usar; ignorada.',
       );
     }
     return ParsedSheetData(
@@ -289,7 +289,7 @@ List<ParsedRow> _resolveTransfers(
     if (sameName(t.banco, destino)) {
       errors.add(
         'Linha ${t.sheetRow} (gastos, transfer): origem e destino são '
-        'a mesma conta ($destino) — ignorada.',
+        'a mesma conta ($destino); ignorada.',
       );
       return;
     }
@@ -309,7 +309,7 @@ List<ParsedRow> _resolveTransfers(
     if (candidates.isEmpty) {
       errors.add(
         'Linha ${t.sheetRow} (gastos, transfer): destino em branco e '
-        'nenhuma entrada com o mesmo valor nas entradas — ignorada.',
+        'nenhuma entrada com o mesmo valor nas entradas; ignorada.',
       );
       continue;
     }
@@ -317,7 +317,7 @@ List<ParsedRow> _resolveTransfers(
     if (destinos.length > 1) {
       errors.add(
         'Linha ${t.sheetRow} (gastos, transfer): destino em branco e '
-        'mais de uma entrada com o mesmo valor apontando para contas diferentes — '
+        'mais de uma entrada com o mesmo valor apontando para contas diferentes; '
         'ignorada (não dá para saber qual é).',
       );
       continue;

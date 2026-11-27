@@ -130,7 +130,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Não consegui'), findsNothing);
 
-    // O botão da prévia: "Importar N lançamento(s)".
+    // O botão da prévia: "Importar N lançamentos".
     final importButton = find.ancestor(
       of: find.textContaining(RegExp(r'^Importar \d+ lançamento')),
       matching: find.byType(FilledButton),

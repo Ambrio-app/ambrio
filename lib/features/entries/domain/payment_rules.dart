@@ -104,3 +104,13 @@ int balanceEffect({
   if (toAccountId == forAccountId && type.hasDestination) effect += amountCents;
   return effect;
 }
+
+/// Juros e encargos a partir da taxa que o banco informou (feat 0027): [rateBps] é a taxa em
+/// centésimos de ponto percentual (2,5 % = 250) aplicada sobre o que está **em aberto** no cartão.
+///
+/// Só inteiros e meio centavo para cima (`1.000,00 × 2,50 % = 25,00`); sem `double`. Sem nada
+/// em aberto não há base: devolve 0. A taxa vem de quem digita, o app não embute nenhuma.
+int interestFromRate(int openCents, int rateBps) {
+  if (openCents <= 0 || rateBps <= 0) return 0;
+  return (openCents * rateBps + 5000) ~/ 10000;
+}

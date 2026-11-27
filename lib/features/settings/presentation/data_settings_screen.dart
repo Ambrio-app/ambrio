@@ -9,6 +9,7 @@ import '../../../core/widgets/tour_step.dart';
 import '../../../core/widgets/tour_target.dart';
 import '../data/backup_service.dart';
 import 'backup_actions.dart';
+import 'report_section.dart';
 import 'settings_providers.dart';
 
 /// Backup e restauração: o banco inteiro num arquivo `.sqlite`.
@@ -176,6 +177,8 @@ class _DataSettingsScreenState extends ConsumerState<DataSettingsScreen> {
             'financeiros: guarde em um lugar seguro. As chaves de IA não vão nele.',
             style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
+          const Divider(height: 40),
+          const ReportSection(),
         ],
       ),
     );

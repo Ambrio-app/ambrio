@@ -26,4 +26,7 @@ abstract final class Formatters {
 
   /// `setembro de 2026`
   static String monthYear(DateTime date) => _monthYear.format(date);
+
+  /// "1 lançamento" ou "3 lançamentos": plural de verdade, sem "(s)".
+  static String count(int n, String one, String many) => '$n ${n == 1 ? one : many}';
 }

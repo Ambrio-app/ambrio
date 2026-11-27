@@ -136,12 +136,12 @@ void _planilhaReal() {
       final plan = await buildImportPlan(parsed: parsed, mapped: {'bradesco|debito': _bradesco}, isDuplicate: _never);
 
       final notes = importNotes(parsed, plan.rows);
-      expect(notes, contains(startsWith('1 vieram desmarcada(s)')));
-      expect(notes, contains(startsWith('1 parcela(s)')));
-      expect(notes, contains(startsWith('1 linha(s) estavam sem data')));
-      expect(notes, contains(startsWith('2 transferência(s) apareciam duas vezes')));
+      expect(notes, contains(startsWith('1 veio desmarcada')));
+      expect(notes, contains(startsWith('1 parcela estava')));
+      expect(notes, contains(startsWith('1 linha estava sem data')));
+      expect(notes, contains(startsWith('2 transferências apareciam duas vezes')));
       expect(notes, contains(contains('gastos recorrentes')));
-      expect(notes.where((n) => n.contains('fatura(s) sem o cartão')), isEmpty, reason: 'só aparece o que aconteceu');
+      expect(notes.where((n) => n.contains('sem o cartão na planilha')), isEmpty, reason: 'só aparece o que aconteceu');
     });
 
     test('linha que a própria pessoa desmarcou não conta como "vieram desmarcadas" (0036)', () async {

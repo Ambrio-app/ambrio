@@ -22,6 +22,8 @@ import 'entry_money_rule.dart';
 import 'entry_persistence.dart';
 import 'month_providers.dart';
 
+part 'entry_form_screen_fields.dart';
+
 /// Criar ou editar um lançamento.
 ///
 /// O valor vem primeiro e com foco: é o que se sabe na hora de lançar. Embaixo
@@ -54,6 +56,11 @@ class _EntryFormScreenState extends ConsumerState<EntryFormScreen> {
   /// fatura e o app ainda não tinha. Vazio = nenhum.
   final _interest = TextEditingController();
 
+  /// Compra parcelada (feat 0031), só ao criar despesa no cartão: em quantas vezes e em
+  /// qual parcela a pessoa está (1 = compra de hoje). O "Valor" digitado é o total.
+  int _installments = 1;
+  int _currentInstallment = 1;
+
   EntryType _type = EntryType.expense;
   int? _accountId; // em transferência, a origem
   int? _toAccountId; // só em transferência
@@ -82,6 +89,9 @@ class _EntryFormScreenState extends ConsumerState<EntryFormScreen> {
   bool _descriptionEdited = false;
 
   bool get _isEditing => widget.entryId != null;
+
+  /// Para o corpo do formulário (em outro arquivo, `part`) chamar setState sem aviso do analisador.
+  void _update(VoidCallback change) => setState(change);
 
   @override
   void initState() {
@@ -219,57 +229,6 @@ class _EntryFormScreenState extends ConsumerState<EntryFormScreen> {
     );
   }
 
-  Widget _fields(Account? account, Account? toAccount, List<Account> accounts) {
-    final cards = accounts.where((a) => a.kind.isCard).toList();
-    // Seleção de conta: muda o estado e refaz a sugestão de descrição.
-    void pick(VoidCallback change) => setState(() {
-      change();
-      _suggestDescription(accounts);
-    });
-
-    return EntryFormFields(
-      accounts: accounts,
-      account: account,
-      toAccount: toAccount,
-      balances: ref.watch(accountBalancesProvider).value ?? const {},
-      amount: _amount,
-      amountFocus: _amountFocus,
-      interest: _interest,
-      description: _description,
-      note: _note,
-      type: _type,
-      formTypes: _isEditing && _type == EntryType.billPayment ? entryFormTypesEditingBill : entryFormTypes,
-      date: _date,
-      accountId: _accountId,
-      isEditing: _isEditing,
-      tourIsHere: _tourIsHere,
-      submitted: _submitted,
-      amountError: _shownAmountError,
-      interestCents: _interestCents,
-      onAmountChanged: () => setState(() => _lastSaved = null),
-      onTypeSelected: (type) => pick(() {
-        _type = type;
-        if (!type.hasDestination) _toAccountId = null;
-      }),
-      onFromSelected: (id) => pick(() {
-        _accountId = id;
-        if (_toAccountId == id) _toAccountId = null;
-      }),
-      onToSelected: (id) => pick(() => _toAccountId = id),
-      onCardSelected: (id) => pick(() {
-        _toAccountId = id;
-        // Sai da conta dona do cartão, se ele tiver uma (dá para trocar).
-        final owner = cards.firstWhere((c) => c.id == id).linkedAccountId;
-        if (owner != null) _accountId = owner;
-      }),
-      onInterestChanged: () => setState(() {}),
-      onPickDate: _pickDate,
-      // Só digitação do usuário chega aqui (mudar .text por código não chama
-      // onChanged) — daí marcar como "dele" e parar de sugerir.
-      onDescriptionTyped: () => setState(() => _descriptionEdited = true),
-    );
-  }
-
   Future<void> _pickDate() async {
     final picked = await pickEntryDate(context, _date);
     if (picked != null) setState(() => _date = picked);
@@ -294,6 +253,8 @@ class _EntryFormScreenState extends ConsumerState<EntryFormScreen> {
     setState(() {
       _amount.clear();
       _interest.clear();
+      _installments = 1;
+      _currentInstallment = 1;
       _note.clear();
       _description.clear();
       _descriptionEdited = false;
@@ -354,11 +315,15 @@ class _EntryFormScreenState extends ConsumerState<EntryFormScreen> {
         date: _date,
         note: _note.text,
       );
+      // Compra parcelada: uma parcela por fatura (só ao criar despesa no cartão).
+      final splitting = !_isEditing && _type == EntryType.expense && account.kind.isCard && _installments > 1;
       await saveEntryWithInterest(
         ref.read(entriesRepositoryProvider),
         draft,
         interestCents: _interestCents,
         cardId: toAccount?.id,
+        installments: splitting ? _installments : 1,
+        currentInstallment: _currentInstallment,
       );
       // Leva a tela do mês para onde o lançamento foi parar — reforça a regra
       // de virada em vez de o lançamento "sumir" do mês que estava aberto.
@@ -369,7 +334,9 @@ class _EntryFormScreenState extends ConsumerState<EntryFormScreen> {
       if (andNew) {
         // Confirmação no rodapé, e não num SnackBar: o SnackBar cobriria o
         // próprio botão "Salvar e novo" bem quando se quer tocar nele de novo.
-        final saved = 'Salvo: ${draft.description.trim()} · ${Formatters.money(cents)}';
+        final saved =
+            'Salvo: ${draft.description.trim()} · ${Formatters.money(cents)}'
+            '${splitting ? ' em ${_installments}x' : ''}';
         _resetForNext(accounts);
         setState(() => _lastSaved = saved);
       } else {
@@ -386,11 +353,6 @@ class _EntryFormScreenState extends ConsumerState<EntryFormScreen> {
   Future<void> _deleteWithUndo() async {
     final entry = _original;
     if (entry == null) return;
-    final repo = ref.read(entriesRepositoryProvider);
-    final messenger = ScaffoldMessenger.of(context);
-    await repo.delete(entry.id);
-    if (!mounted) return;
-    context.pop();
-    showEntryDeletedUndo(messenger, repo, entry);
+    await deleteEntryWithUndo(context, ref.read(entriesRepositoryProvider), entry);
   }
 }

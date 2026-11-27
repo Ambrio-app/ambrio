@@ -1,5 +1,6 @@
 import 'package:ambrio/core/database/app_database.dart';
 import 'package:ambrio/core/utils/clock.dart';
+import 'package:ambrio/core/utils/formatters.dart';
 import 'package:ambrio/core/widgets/money_text.dart';
 import 'package:ambrio/features/accounts/domain/account_kind.dart';
 import 'package:ambrio/features/entries/domain/month_panel.dart';
@@ -131,6 +132,29 @@ void main() {
         today: _today,
       );
       expect(semDia.nextDue, isNull);
+      expect(semDia.dueCards, isEmpty);
+    });
+
+    test('os cartões saem do que vence primeiro ao último, com o valor em aberto', () {
+      final p = MonthPanel.from(situation: _situation(), today: _today);
+      expect(p.dueCards.map((d) => d.card.name), ['Nubank', 'Inter']);
+      expect(p.dueCards.map((d) => d.openCents), [120000, 70000]);
+    });
+
+    test('o painel lista no máximo dois cartões e, em empate de dia, vale a ordem de entrada', () {
+      final cards = [
+        for (final (i, name) in ['A', 'B', 'C'].indexed)
+          _account(10 + i, name, kind: AccountKind.creditCard, dueDay: 25),
+      ];
+      final p = MonthPanel.from(
+        situation: _situation(
+          accounts: [_account(1, 'Azul'), ...cards],
+          balances: {1: 1, 10: -100, 11: -200, 12: -300},
+        ),
+        today: _today,
+      );
+      expect(p.dueCards, hasLength(MonthPanel.maxDueCards));
+      expect(p.dueCards.map((d) => d.card.name), ['A', 'B']);
     });
   });
 
@@ -175,17 +199,17 @@ void main() {
 
         expect(
           find.text(kHiddenMoney),
-          findsOneWidget,
-          reason: 'o saldo em conta, escondido',
+          findsNWidgets(3),
+          reason: 'o saldo em conta e o em aberto dos dois cartões, escondidos',
         );
         expect(find.text('Gastou 82% do que entrou'), findsOneWidget);
-        expect(
-          find.text('Entrou'),
-          findsNothing,
-          reason: 'uma barra "Entrou" sempre cheia não diz nada',
-        );
+        // A legenda nomeia as pontas da barra; não existe uma segunda barra "Entrou" sempre cheia.
+        expect(find.text('Gastou'), findsOneWidget);
+        expect(find.text('Entrou'), findsOneWidget);
         expect(find.text('100%'), findsNothing);
-        expect(find.text('Cartão Nubank vence em 3 dias'), findsOneWidget);
+        expect(find.text('Cartões, em aberto'), findsOneWidget);
+        expect(find.text('Nubank vence em 3 dias'), findsOneWidget);
+        expect(find.text('Inter vence em 12 dias'), findsOneWidget);
         expect(
           find.textContaining('R\$ 4'),
           findsNothing,
@@ -199,8 +223,10 @@ void main() {
     ) async {
       await tester.pumpWidget(host(hiddenAtStart: false));
 
-      expect(find.textContaining('Entrou R\$'), findsOneWidget);
-      expect(find.textContaining('Gastou R\$'), findsOneWidget);
+      expect(find.text('Entrou ${Formatters.money(500000)}'), findsOneWidget);
+      expect(find.text('Gastou ${Formatters.money(410000)}'), findsOneWidget);
+      expect(find.text(Formatters.money(120000)), findsOneWidget, reason: 'em aberto do Nubank');
+      expect(find.text(Formatters.money(70000)), findsOneWidget, reason: 'em aberto do Inter');
     });
 
     testWidgets('o olhinho do painel alterna', (tester) async {
@@ -237,13 +263,28 @@ void main() {
 
         expect(
           find.bySemanticsLabel(
-            'Em conta, valor oculto. Gastou 82% do que entrou. Cartão Nubank vence em 3 dias. Toque para ver a situação',
+            'Em conta, valor oculto. Gastou 82% do que entrou. Cartão Nubank vence em 3 dias, em aberto valor oculto. Cartão Inter vence em 12 dias, em aberto valor oculto. Toque para ver a situação',
           ),
           findsOneWidget,
         );
         handle.dispose();
       },
     );
+
+    testWidgets('leitor de tela com o olhinho aberto fala o em aberto', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(host(hiddenAtStart: false));
+
+      expect(
+        find.bySemanticsLabel(
+          RegExp('Cartão Nubank vence em 3 dias, em aberto .*1\\.200,00'),
+        ),
+        findsOneWidget,
+      );
+      handle.dispose();
+    });
 
     testWidgets('texto grande (200%): rótulo acima da barra, sem cortar', (
       tester,

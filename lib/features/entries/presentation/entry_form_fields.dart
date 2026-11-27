@@ -7,6 +7,7 @@ import 'entry_account_section.dart';
 import 'entry_amount_field.dart';
 import 'entry_detail_fields.dart';
 import 'entry_type_grid.dart';
+import 'installments_field.dart';
 
 
 
@@ -45,6 +46,11 @@ class EntryFormFields extends StatelessWidget {
     required this.onInterestChanged,
     required this.onPickDate,
     required this.onDescriptionTyped,
+    this.installments = 1,
+    this.currentInstallment = 1,
+    this.onInstallmentsChanged,
+    this.onCurrentInstallmentChanged,
+    this.installmentNote,
   });
 
   final List<Account> accounts;
@@ -76,6 +82,16 @@ class EntryFormFields extends StatelessWidget {
   final VoidCallback onInterestChanged;
   final VoidCallback onPickDate;
   final VoidCallback onDescriptionTyped;
+
+  /// Compra parcelada (feat 0031): em quantas vezes e em qual parcela a pessoa está.
+  /// O campo só aparece ao **criar** uma despesa no cartão.
+  final int installments;
+  final int currentInstallment;
+  final ValueChanged<int>? onInstallmentsChanged;
+  final ValueChanged<int>? onCurrentInstallmentChanged;
+
+  /// Ao **editar** uma parcela: "Parcela 2/3 desta compra. Editar muda só esta."
+  final String? installmentNote;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +137,25 @@ class EntryFormFields extends StatelessWidget {
           onCardSelected: onCardSelected,
           onInterestChanged: onInterestChanged,
         ),
+        if (!isEditing &&
+            type == EntryType.expense &&
+            (account?.kind.isCard ?? false) &&
+            onInstallmentsChanged != null &&
+            onCurrentInstallmentChanged != null) ...[
+          const SizedBox(height: 16),
+          InstallmentsField(
+            count: installments,
+            current: currentInstallment,
+            totalCents: paidCents,
+            date: date,
+            onCountChanged: onInstallmentsChanged!,
+            onCurrentChanged: onCurrentInstallmentChanged!,
+          ),
+        ],
+        if (installmentNote != null) ...[
+          const SizedBox(height: 8),
+          Text(installmentNote!, style: Theme.of(context).textTheme.bodySmall),
+        ],
         const SizedBox(height: 16),
         EntryDetailFields(
           description: description,

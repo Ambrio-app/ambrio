@@ -33,6 +33,32 @@ void main() {
     });
   });
 
+  group('interestFromRate (juros em %, feat 0027)', () {
+    test('taxa sobre o em aberto, só com inteiros', () {
+      expect(interestFromRate(100000, 250), 2500, reason: '2,50% de R\$ 1.000,00 = R\$ 25,00');
+      expect(interestFromRate(123456, 1999), 24679, reason: '19,99% de R\$ 1.234,56');
+    });
+
+    test('meio centavo arredonda para cima', () {
+      // 3 centavos × 16,67% = 0,5001 centavo → 1; 1 centavo × 50% = 0,5 → 1.
+      expect(interestFromRate(1, 5000), 1);
+      expect(interestFromRate(3, 1666), 0, reason: '0,4998 centavo cai para 0');
+      expect(interestFromRate(3, 1667), 1);
+    });
+
+    test('sem em aberto ou sem taxa não há juros', () {
+      expect(interestFromRate(0, 250), 0);
+      expect(interestFromRate(-5000, 250), 0, reason: 'cartão com crédito não tem base');
+      expect(interestFromRate(100000, 0), 0);
+    });
+
+    test('o maior valor aceito não estoura', () {
+      final worst = interestFromRate(999999999999, 9999); // R$ 9,99 bi a 99,99%: cabe folgado em int de 64 bits
+      expect(worst, lessThan(999999999999));
+      expect(worst, greaterThan(0));
+    });
+  });
+
   group('billPaymentBlockedReason', () {
     String? check(int open, int amount) =>
         billPaymentBlockedReason(cardName: 'Amazon', openCents: open, amountCents: amount);

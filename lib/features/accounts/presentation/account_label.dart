@@ -31,4 +31,4 @@ String cardTitle(Account card) {
 }
 
 IconData accountIcon(Account account) =>
-    account.kind.isCard ? Icons.credit_card : Icons.account_balance_outlined;
+    account.kind.isCard ? Icons.credit_card_outlined : Icons.account_balance_outlined;

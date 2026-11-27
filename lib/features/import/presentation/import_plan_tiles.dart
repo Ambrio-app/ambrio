@@ -36,7 +36,7 @@ class ImportPlanTile extends StatelessWidget {
     final row = plan.row;
     final reasonText = switch (plan.reason) {
       ImportSkipReason.duplicate => 'já importado antes',
-      ImportSkipReason.suspiciousDate => 'data fora do padrão da aba — confira',
+      ImportSkipReason.suspiciousDate => 'data fora do padrão da aba; confira',
       null => null,
     };
     return CheckboxListTile(

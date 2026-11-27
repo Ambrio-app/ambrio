@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/utils/clock.dart';
 import '../../../core/database/app_database.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../core/utils/year_month.dart';
 import '../../../core/widgets/app_drawer.dart';
 import '../../../core/widgets/double_back_to_exit.dart';
@@ -262,8 +263,19 @@ class _MonthBody extends ConsumerWidget {
                       textAlign: TextAlign.center,
                     ),
                   )
-                else
+                else ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Semantics(
+                      header: true,
+                      child: Text(
+                        'Lançamentos de ${month.label}',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ),
+                  ),
                   for (final row in shown) EntryTile(row: row),
+                ],
               ],
             },
           ],
@@ -293,7 +305,7 @@ class _FilterStatus extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 4, 8, 0),
       child: Row(
         children: [
-          Expanded(child: Text('Mostrando $shown de $total lançamento(s)')),
+          Expanded(child: Text('Mostrando $shown de ${Formatters.count(total, 'lançamento', 'lançamentos')}')),
           TextButton(onPressed: onClear, child: const Text('Limpar filtros')),
         ],
       ),

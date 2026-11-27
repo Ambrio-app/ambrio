@@ -1,21 +1,25 @@
-
 import '../data/entries_repository.dart';
 import '../domain/entry_type.dart';
-
-
-
-
 
 /// Grava o lançamento. Se há juros e encargos de fatura ([interestCents] > 0,
 /// só em pagamento novo, com [cardId] o cartão pago), grava também um gasto no
 /// cartão: entra nos totais do mês, ao contrário de um ajuste de saldo, e vai na
 /// MESMA transação do pagamento — ou entram os dois, ou nenhum.
+///
+/// Com [installments] > 1 (despesa nova no cartão, feat 0031) grava uma parcela por
+/// fatura, a partir da parcela [currentInstallment]; o valor do [draft] é o total.
 Future<void> saveEntryWithInterest(
   EntriesRepository repo,
   EntryDraft draft, {
   required int interestCents,
   required int? cardId,
+  int installments = 1,
+  int currentInstallment = 1,
 }) async {
+  if (installments > 1) {
+    await repo.saveInstallments(draft, count: installments, current: currentInstallment);
+    return;
+  }
   if (interestCents <= 0) {
     await repo.save(draft);
     return;

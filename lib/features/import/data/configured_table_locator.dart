@@ -31,7 +31,7 @@ class ConfiguredTableLocator implements LlmTableLocator {
     this.retryDelay = const Duration(seconds: 2),
     this.authorize,
     this.missingKeyMessage =
-        'Nenhuma chave de LLM configurada — rebuilde com '
+        'Nenhuma chave de LLM configurada. Rebuilde com '
         '--dart-define=GROQ_API_KEY=... (e, opcionalmente, ANTHROPIC_API_KEY=...).',
   });
 

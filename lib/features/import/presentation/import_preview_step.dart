@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/utils/formatters.dart';
 import '../../entries/domain/entry_type.dart';
 import '../domain/build_import_plan.dart';
 import '../domain/import_plan.dart';
@@ -60,14 +61,17 @@ class ImportPreviewStep extends StatelessWidget {
       (Icons.shopping_bag_outlined, 'Despesas', ofType(EntryType.expense)),
       (Icons.savings_outlined, 'Entradas', ofType(EntryType.income)),
       (Icons.swap_horiz, 'Transferências', ofType(EntryType.transfer)),
-      (Icons.credit_card, 'Pagamentos de fatura', ofType(EntryType.billPayment)),
+      (Icons.credit_card_outlined, 'Pagamentos de fatura', ofType(EntryType.billPayment)),
     ];
     final toImport = plan.where((p) => p.include).length;
     final toReview = plan.where((p) => p.reason != null).length;
     final errors = [...parsed.rowErrors, ...planErrors];
     final notes = [
       ...importNotes(parsed, plan),
-      if (leftOut > 0) '$leftOut linha(s) ficaram de fora nos bancos que você marcou "Não importar".',
+      if (leftOut > 0)
+        leftOut == 1
+            ? '1 linha ficou de fora nos bancos que você marcou "Não importar".'
+            : '$leftOut linhas ficaram de fora nos bancos que você marcou "Não importar".',
     ];
 
     return Column(
@@ -80,7 +84,7 @@ class ImportPreviewStep extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
                 child: Text(
-                  '$toImport de ${plan.length} lançamento(s) serão importados de "$sheetName".',
+                  '$toImport de ${Formatters.count(plan.length, 'lançamento', 'lançamentos')} ${toImport == 1 ? 'será importado' : 'serão importados'} de "$sheetName".',
                   style: theme.textTheme.titleMedium,
                 ),
               ),
@@ -178,7 +182,7 @@ class ImportPreviewStep extends StatelessWidget {
               onPressed: toImport == 0 || busy ? null : onConfirm,
               child: busy
                   ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text('Importar $toImport lançamento(s)'),
+                  : Text('Importar ${Formatters.count(toImport, 'lançamento', 'lançamentos')}'),
             ),
           ),
         ),

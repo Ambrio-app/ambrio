@@ -41,7 +41,7 @@ final llmTableLocatorProvider = Provider<LlmTableLocator>(
         (await ref.read(settingsRepositoryProvider).aiConsent()).covers({for (final s in slots) consentKeyOf(s)}),
     missingKeyMessage:
         'Nenhuma IA configurada. Abra o menu › Configurações › Inteligência '
-        'artificial e configure a Principal — a chave grátis da Groq basta.',
+        'artificial e configure a Principal: a chave grátis da Groq basta.',
   ),
 );
 

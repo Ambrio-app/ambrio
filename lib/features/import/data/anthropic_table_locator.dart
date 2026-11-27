@@ -45,7 +45,7 @@ class AnthropicTableLocator implements PingableLocator {
   static const _apiVersion = '2023-06-01';
 
   static const _missingKeyMessage =
-      'Chave da Anthropic não configurada — rebuilde com '
+      'Chave da Anthropic não configurada. Rebuilde com '
       '--dart-define=ANTHROPIC_API_KEY=...';
 
   Map<String, String> get _headers => {

@@ -61,7 +61,7 @@ class FirstStepsCard extends StatelessWidget {
               TourTarget(
                 anchor: TourAnchor.cardAdd,
                 child: step(
-                  Icons.credit_card,
+                  Icons.credit_card_outlined,
                   'Cadastrar um cartão',
                   'Para lançar compras no crédito.',
                   () => context.push(

@@ -13,28 +13,45 @@ class MonthPanel {
     required this.totalCents,
     required this.incomeCents,
     required this.spentCents,
-    required this.nextDue,
+    required this.dueCards,
   });
+
+  /// Quantos cartões o painel lista (o resto fica na tela Situação).
+  static const int maxDueCards = 2;
 
   factory MonthPanel.from({
     required MonthSituation situation,
     required DateTime today,
   }) {
-    ({Account card, DueInfo due})? next;
+    final due = <({Account card, DueInfo due, int openCents, int order})>[];
     for (final c in situation.openCards) {
       if (c.openCents <= 0 || c.card.dueDay == null) continue;
-      final due = DueInfo.of(dueDay: c.card.dueDay, today: today);
-      if (next == null || due.daysUntil! < next.due.daysUntil!) {
-        next = (card: c.card, due: due);
-      }
+      due.add((
+        card: c.card,
+        due: DueInfo.of(dueDay: c.card.dueDay, today: today),
+        openCents: c.openCents,
+        order: due.length,
+      ));
     }
+    // Em empate de dia, vale a ordem em que os cartões vieram (o sort do Dart não é estável).
+    due.sort((a, b) {
+      final byDay = a.due.daysUntil!.compareTo(b.due.daysUntil!);
+      return byDay != 0 ? byDay : a.order.compareTo(b.order);
+    });
     return MonthPanel._(
       totalCents: situation.totalCents,
       incomeCents: situation.incomeCents,
       spentCents: situation.spentCents,
-      nextDue: next,
+      dueCards: [
+        for (final d in due.take(maxDueCards))
+          (card: d.card, due: d.due, openCents: d.openCents),
+      ],
     );
   }
+
+  /// Até [maxDueCards] cartões com algo em aberto e dia de vencimento, do que vence primeiro ao último,
+  /// com o valor em aberto (nunca "fatura a pagar": em aberto é o saldo do cartão).
+  final List<({Account card, DueInfo due, int openCents})> dueCards;
 
   /// "Em conta": a soma dos saldos das contas correntes.
   final int totalCents;
@@ -42,7 +59,8 @@ class MonthPanel {
   final int spentCents;
 
   /// O cartão com algo em aberto que vence primeiro (e o texto do vencimento); nulo se nenhum tem dia de vencimento.
-  final ({Account card, DueInfo due})? nextDue;
+  ({Account card, DueInfo due})? get nextDue =>
+      dueCards.isEmpty ? null : (card: dueCards.first.card, due: dueCards.first.due);
 
   bool get hasIncome => incomeCents > 0;
 

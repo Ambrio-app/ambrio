@@ -79,14 +79,14 @@ void main() {
   testWidgets('mostra um resumo por tipo, não uma linha por lançamento', (tester) async {
     await pump(tester);
 
-    expect(find.textContaining('3 de 4 lançamento(s) serão importados de "Outubro"'), findsOneWidget);
+    expect(find.textContaining('3 de 4 lançamentos serão importados de "Outubro"'), findsOneWidget);
     expect(find.text('Despesas'), findsOneWidget);
     expect(find.textContaining('2 de 3 marcadas'), findsOneWidget);
     expect(find.text('Entradas'), findsOneWidget);
     expect(find.textContaining('1 de 1 marcada'), findsOneWidget);
     // As linhas uma a uma só aparecem em "Ver mais detalhes".
     expect(find.text('Padaria'), findsNothing);
-    expect(find.text('Importar 3 lançamento(s)'), findsOneWidget);
+    expect(find.text('Importar 3 lançamentos'), findsOneWidget);
   });
 
   testWidgets('destaca o que veio desmarcado para revisar', (tester) async {
@@ -103,13 +103,13 @@ void main() {
     await tester.tap(find.byType(Switch).first);
     await tester.pump();
     expect(find.textContaining('3 de 3 marcadas'), findsOneWidget);
-    expect(find.text('Importar 4 lançamento(s)'), findsOneWidget);
+    expect(find.text('Importar 4 lançamentos'), findsOneWidget);
     expect(changes, 1);
 
     await tester.tap(find.byType(Switch).first);
     await tester.pump();
     expect(find.textContaining('0 de 3 marcadas'), findsOneWidget);
-    expect(find.text('Importar 1 lançamento(s)'), findsOneWidget);
+    expect(find.text('Importar 1 lançamento'), findsOneWidget);
   });
 
   testWidgets('"Ver mais detalhes" lista cada linha e a seleção vale ao voltar', (tester) async {
@@ -128,17 +128,17 @@ void main() {
     await tester.pageBack();
     await tester.pumpAndSettle();
     expect(find.textContaining('1 de 3 marcadas'), findsOneWidget);
-    expect(find.text('Importar 2 lançamento(s)'), findsOneWidget);
+    expect(find.text('Importar 2 lançamentos'), findsOneWidget);
   });
 
   testWidgets('erros ficam recolhidos num item só', (tester) async {
-    await pump(tester, planErrors: const ['Linha 9: faltou valor — ignorada.']);
+    await pump(tester, planErrors: const ['Linha 9: faltou valor; ignorada.']);
 
     expect(find.text('1 linha ignorada por erro'), findsOneWidget);
-    expect(find.text('Linha 9: faltou valor — ignorada.'), findsNothing);
+    expect(find.text('Linha 9: faltou valor; ignorada.'), findsNothing);
     await tester.tap(find.text('1 linha ignorada por erro'));
     await tester.pumpAndSettle();
-    expect(find.text('Linha 9: faltou valor — ignorada.'), findsOneWidget);
+    expect(find.text('Linha 9: faltou valor; ignorada.'), findsOneWidget);
   });
 
   testWidgets('aba sem nenhuma linha legível explica o motivo, em vez de uma lista vazia', (tester) async {
@@ -157,7 +157,7 @@ void main() {
               onSelect: (_, _, _) {},
               onSkip: (_, _) {},
               onContinue: () {},
-              problems: const ['Linha 4 ("Padaria"): sem data, e a aba não tem nenhuma outra data para usar — ignorada.'],
+              problems: const ['Linha 4 ("Padaria"): sem data, e a aba não tem nenhuma outra data para usar; ignorada.'],
             ),
           ),
         ),

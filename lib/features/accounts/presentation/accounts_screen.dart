@@ -103,7 +103,7 @@ class _AccountTile extends ConsumerWidget {
     final details = account.kind.isCard
         ? [
             if (orphan)
-              'sem conta vinculada — toque para vincular'
+              'sem conta vinculada: toque para vincular'
             else
               'cartão',
             'fecha dia ${account.closingDay}',

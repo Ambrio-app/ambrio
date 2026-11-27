@@ -5,7 +5,7 @@ A personal finance app for Android, for people who already track their money in 
 
 ![Home, Situation and Pay bill screens, in light and dark themes](docs/telas/hero.png)
 
-> **Status:** version 1.0.4. An open source side project, maintained by one person. Delivery notes are in [`feat/`](feat/README.md) (Portuguese).
+> **Status:** version 1.1.0. An open source side project, maintained by one person. Delivery notes are in [`feat/`](feat/README.md) (Portuguese).
 > Portuguese README: [README.md](README.md).
 
 ## What it does
@@ -19,7 +19,7 @@ A personal finance app for Android, for people who already track their money in 
 
 ## Install
 
-The app is not on the Play Store. Download the latest `.apk` from [Releases](https://github.com/IziFnc/IziFnc/releases) and open it on your phone
+The app is not on the Play Store. Download the latest `.apk` from [Releases](https://github.com/Ambrio-app/ambrio/releases) and open it on your phone
 (Android will ask you to allow "unknown sources"). Before installing, **verify the file**: [docs/VERIFICAR.md](docs/VERIFICAR.md) lists the SHA-256 of
 each APK and the signing certificate (Portuguese).
 

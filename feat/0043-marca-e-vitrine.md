@@ -1,6 +1,6 @@
 # 0043 — Marca "Tinta & âmbar", nome novo e vitrine do projeto (1.0.4)
 
-**Data:** 2026-11-16 · **Status:** 🚧 em andamento (tema e teste de contraste prontos; falta nome, ícone, textos e README)
+**Data:** 2026-11-16 · **Status:** ✅ concluído (publicada na 1.0.4)
 
 ## O que muda
 

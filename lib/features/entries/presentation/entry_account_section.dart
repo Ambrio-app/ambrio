@@ -136,16 +136,6 @@ class EntryAccountSection extends StatelessWidget {
           ],
           _ => [chips('Onde', accounts, accountId, onFromSelected)],
         },
-        // Parcelar compra ainda não existe (backlog 0031); sem esta frase a pessoa
-        // acha que o valor total vai ser dividido (júri 1.0.2, R2).
-        if (type == EntryType.expense && (account?.kind.isCard ?? false))
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              'Parcelamento ainda não existe: lance o valor total.',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
         // Antes de salvar, o que falta aparece em tom neutro (não como erro).
         if (!submitted && account == null)
           Padding(

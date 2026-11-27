@@ -48,10 +48,14 @@ class MonthPanelCard extends ConsumerWidget {
           : 'Em conta ${Formatters.money(panel.totalCents)}',
       if (monthLoaded)
         panel.overflow ? '${panel.phrase}, acima do que entrou' : panel.phrase,
-      if (panel.nextDue != null)
-        '${cardTitle(panel.nextDue!.card)} ${panel.nextDue!.due.label}',
+      for (final d in panel.dueCards)
+        '${cardTitle(d.card)} ${d.due.label}, em aberto ${hidden ? 'valor oculto' : Formatters.money(d.openCents)}',
       'Toque para ver a situação',
     ].join('. ');
+
+    final legend = theme.textTheme.bodySmall?.copyWith(
+      color: scheme.onSurfaceVariant,
+    );
 
     // Uma barra só: o quanto do que entrou já foi gasto (a barra inteira é o que entrou).
     // Uma barra "Entrou" sempre cheia não diz nada, então não existe.
@@ -183,35 +187,68 @@ class MonthPanelCard extends ConsumerWidget {
                                 style: theme.textTheme.bodyMedium,
                               ),
                       ),
-                      if (!hidden && panel.hasIncome)
+                      if (panel.hasIncome)
+                        // A legenda da barra: o que gastou na ponta esquerda e o que entrou (a barra
+                        // inteira) na direita. Escondido, só as palavras.
                         Padding(
-                          padding: const EdgeInsets.only(top: 2, right: 8),
-                          child: Text(
-                            'Entrou ${Formatters.money(panel.incomeCents)} · Gastou ${Formatters.money(panel.spentCents)}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
+                          padding: const EdgeInsets.only(top: 4, right: 8),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  hidden
+                                      ? 'Gastou'
+                                      : 'Gastou ${Formatters.money(panel.spentCents)}',
+                                  style: legend,
+                                ),
+                              ),
+                              Text(
+                                hidden
+                                    ? 'Entrou'
+                                    : 'Entrou ${Formatters.money(panel.incomeCents)}',
+                                style: legend,
+                              ),
+                            ],
                           ),
                         ),
                     ],
-                    if (panel.nextDue != null) ...[
+                    if (panel.dueCards.isNotEmpty) ...[
                       const Divider(height: 20),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Icon(
-                              Icons.schedule,
-                              size: 18,
-                              color: scheme.onSurfaceVariant,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                '${cardTitle(panel.nextDue!.card)} ${panel.nextDue!.due.label}',
-                                style: theme.textTheme.bodyLarge,
+                            Text('Cartões, em aberto', style: legend),
+                            const SizedBox(height: 4),
+                            for (final d in panel.dueCards)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.schedule,
+                                      size: 18,
+                                      color: scheme.onSurfaceVariant,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        '${d.card.name} ${d.due.label}',
+                                        style: theme.textTheme.bodyMedium,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    MoneyText(
+                                      d.openCents,
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        fontFeatures: _tabular,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),

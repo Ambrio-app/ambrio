@@ -5,13 +5,13 @@ como relatar um problema de segurança e o que esperar.
 
 ## Versões que recebem correção
 
-Só a **última versão publicada** em [Releases](https://github.com/IziFnc/IziFnc/releases) (hoje a série
+Só a **última versão publicada** em [Releases](https://github.com/Ambrio-app/ambrio/releases) (hoje a série
 1.0.x). Quem usa uma versão mais antiga deve atualizar.
 
 ## Como relatar
 
 Use **"Relatar uma vulnerabilidade"** na aba **Security** do repositório
-([abrir um relato privado](https://github.com/IziFnc/IziFnc/security/advisories/new)). Assim o
+([abrir um relato privado](https://github.com/Ambrio-app/ambrio/security/advisories/new)). Assim o
 problema não fica exposto em público antes de haver correção.
 
 **Não** abra uma issue pública para falha de segurança e **não** cole dados financeiros reais

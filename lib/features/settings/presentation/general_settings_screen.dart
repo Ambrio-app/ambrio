@@ -57,7 +57,7 @@ class GeneralSettingsScreen extends ConsumerWidget {
             label: size.label,
             onChanged: (v) => repo.setTextScale(TextSize.values[v.round()].scale),
           ),
-          Text('${size.label} — o texto do app fica assim.'),
+          Text('${size.label}: o texto do app fica assim.'),
           const SizedBox(height: 16),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,

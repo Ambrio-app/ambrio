@@ -50,7 +50,8 @@ class AppDatabase extends _$AppDatabase {
   /// - v7: `app_settings.last_backup_at` e os índices de `entries` para saldo (feat 0018)
   /// - v8: `app_settings.tour_step`, parada atual do tour guiado (feat 0026)
   /// - v9: consentimento de IA e aviso de privacidade em `app_settings` (feat 0038)
-  static const int currentSchemaVersion = 9;
+  /// - v10: `entries.installment_*`, compra parcelada no cartão (feat 0031)
+  static const int currentSchemaVersion = 10;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -125,6 +126,13 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(schema.appSettings, schema.appSettings.aiConsentVersion);
         await m.addColumn(schema.appSettings, schema.appSettings.aiConsentServices);
         await m.addColumn(schema.appSettings, schema.appSettings.privacyNoticeVersion);
+      },
+      from9To10: (m, schema) async {
+        // Só adiciona três colunas anuláveis: todo lançamento que já existe fica
+        // "não parcelado" (nulo) e nenhum valor, data ou competência muda.
+        await m.addColumn(schema.entries, schema.entries.installmentGroupId);
+        await m.addColumn(schema.entries, schema.entries.installmentNumber);
+        await m.addColumn(schema.entries, schema.entries.installmentCount);
       },
     ),
     beforeOpen: (details) async {

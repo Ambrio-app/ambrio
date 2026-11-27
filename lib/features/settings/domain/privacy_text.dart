@@ -16,7 +16,7 @@ const int kPrivacyVersion = 1;
 const String kPrivacyDate = '25 de outubro de 2026';
 
 /// Onde a pessoa fala com o responsável.
-const String kPrivacyContactUrl = 'https://github.com/IziFnc/IziFnc/issues';
+const String kPrivacyContactUrl = 'https://github.com/Ambrio-app/ambrio/issues';
 
 /// Uma seção da política: título, parágrafos e, se houver, itens.
 class PrivacySection {
@@ -42,6 +42,7 @@ const List<PrivacySection> kPrivacySections = [
       'Um banco de dados local com as suas contas, cartões, lançamentos e configurações.',
       'A chave do serviço de IA, no cofre de chaves do Android (Keystore), criptografada. Ela não entra no backup.',
       'O backup que você mesmo salvar: um arquivo .sqlite sem criptografia. Quem pegar o arquivo lê tudo; guarde em um lugar seguro. Se você o salvar numa pasta de nuvem, ele sai do aparelho.',
+      'O relatório do mês que você mesmo gerar: um PDF feito no aparelho e salvo onde você escolher. Ele traz os totais do mês e, só se você ligar, a lista de lançamentos e os saldos; fica sem senha, então guarde ou envie com o mesmo cuidado do backup.',
     ],
   ),
   PrivacySection(

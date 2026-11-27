@@ -55,4 +55,14 @@ class Entries extends Table {
   IntColumn get competence => integer()();
 
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  /// Compra parcelada (feat 0031): todas as parcelas de uma mesma compra
+  /// dividem este id. Nulo em lançamento comum (e em todo lançamento anterior à v10).
+  TextColumn get installmentGroupId => text().nullable()();
+
+  /// Número desta parcela (1 a [installmentCount]); nulo em lançamento comum.
+  IntColumn get installmentNumber => integer().nullable()();
+
+  /// Quantas parcelas a compra tem no total; nulo em lançamento comum.
+  IntColumn get installmentCount => integer().nullable()();
 }

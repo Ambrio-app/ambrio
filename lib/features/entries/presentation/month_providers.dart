@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/database/repositories.dart';
 import '../../../core/utils/year_month.dart';
+import '../data/entries_repository.dart' show InstallmentsRepository;
 import '../domain/entry_with_account.dart';
 
 part 'month_providers.g.dart';
@@ -13,6 +14,12 @@ Stream<List<EntryWithAccount>> monthEntries(Ref ref, YearMonth month) =>
 /// Total de lançamentos (todos os meses): zero = a pessoa ainda não começou.
 @riverpod
 Stream<int> entryCount(Ref ref) => ref.watch(entriesRepositoryProvider).watchCount();
+
+/// O que ainda vai cair nos cartões em parcelas futuras (feat 0031), por cartão, em centavos.
+/// Fica **fora** do "em aberto" (que só conta até hoje); a Situação mostra à parte.
+@riverpod
+Stream<Map<int, int>> futureInstallments(Ref ref) =>
+    ref.watch(entriesRepositoryProvider).watchFutureInstallments();
 
 /// O aviso de backup da home foi dispensado (só nesta abertura do app: na
 /// próxima, se o backup continuar vencido, ele volta).

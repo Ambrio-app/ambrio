@@ -100,6 +100,8 @@ class _Content extends ConsumerWidget {
     ]..sort((a, b) => (a.due.daysUntil ?? 1 << 20).compareTo(b.due.daysUntil ?? 1 << 20));
 
     final summary = situation.summary;
+    final future = ref.watch(futureInstallmentsProvider).value ?? const <int, int>{};
+    final futureTotal = future.values.fold(0, (a, b) => a + b);
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
@@ -108,6 +110,12 @@ class _Content extends ConsumerWidget {
         if (situation.openCardsCents > 0) ...[
           const SizedBox(height: 6),
           MoneyText(situation.openCardsCents, style: theme.textTheme.titleMedium, prefix: 'Faturas abertas '),
+        ],
+        // Compras parceladas: o que ainda vai cair nos próximos meses. Fica à parte do "em aberto".
+        if (futureTotal > 0) ...[
+          const SizedBox(height: 2),
+          MoneyText(futureTotal, style: theme.textTheme.bodyMedium, prefix: 'Parcelas a vencer '),
+          Text('Compras parceladas em meses futuros: ainda não entram nas faturas abertas.', style: muted),
         ],
         heading('Seu dinheiro'),
         Text('Toque numa conta para ver só os lançamentos dela.', style: muted),
@@ -145,6 +153,8 @@ class _Content extends ConsumerWidget {
                     ].join(' · '),
                     style: muted,
                   ),
+                  if ((future[c.data.card.id] ?? 0) > 0)
+                    MoneyText(future[c.data.card.id]!, style: muted, prefix: 'Parcelas a vencer '),
                   Wrap(
                     alignment: WrapAlignment.end,
                     spacing: 8,

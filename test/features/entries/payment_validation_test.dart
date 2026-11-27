@@ -264,6 +264,51 @@ void main() {
       expect(interest.type, EntryType.expense, reason: 'é gasto novo: entra nos totais do mês');
     });
 
+    testWidgets('juros em %: a taxa sobre o em aberto vira o R\$ e libera pagar acima do em aberto (feat 0027)', (
+      tester,
+    ) async {
+      tall(tester);
+      await entries.adjustBalance(accountId: bradesco, target: 100000);
+      await buy(100000);
+      await pumpApp(tester);
+      await openBill(tester);
+
+      await tester.tap(find.text('Juros em %'));
+      await tester.pumpAndSettle();
+      await tester.enterText(interestField, '250'); // 2,50 %
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('2,50% de ${Formatters.money(100000)} em aberto = ${Formatters.money(2500)}'),
+        findsOneWidget,
+        reason: 'mostra o valor calculado ao vivo',
+      );
+
+      await tester.enterText(valueField, '102500');
+      await pay(tester);
+      expect(find.byType(BillPaymentScreen), findsNothing);
+      expect(await entries.balanceOf(amazon), 0, reason: '100000 + 2500 de juros - 102500 pagos');
+      final interest = (await cardEntries()).singleWhere((e) => e.description == 'Juros e encargos da fatura');
+      expect(interest.amountCents, 2500);
+    });
+
+    testWidgets('juros em %: trocar entre R\$ e % limpa o campo e sem nada em aberto o seletor não aparece', (
+      tester,
+    ) async {
+      tall(tester);
+      await entries.adjustBalance(accountId: bradesco, target: 100000);
+      await buy(5000);
+      await pumpApp(tester);
+      await openBill(tester);
+
+      await tester.enterText(interestField, '800');
+      await tester.tap(find.text('Juros em %'));
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(interestField).controller!.text, isEmpty);
+      await tester.tap(find.text('Juros em R\$'));
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(interestField).controller!.text, isEmpty);
+    });
+
     testWidgets('acima do em aberto MAIS o juros continua bloqueado e não grava nada', (tester) async {
       tall(tester);
       await entries.adjustBalance(accountId: bradesco, target: 100000);

@@ -34,7 +34,7 @@ class ImportPickSheetStep extends StatelessWidget {
           child: Text(
             busy
                 ? 'Localizando as tabelas… pode levar alguns segundos.'
-                : 'Este passo precisa de internet — um serviço externo ajuda a '
+                : 'Este passo precisa de internet: um serviço externo ajuda a '
                       'localizar as tabelas na aba.',
             style: const TextStyle(fontSize: 12),
           ),

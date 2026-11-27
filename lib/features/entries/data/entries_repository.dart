@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
 
 import '../../../core/utils/clock.dart';
@@ -7,6 +9,9 @@ import '../../accounts/domain/account_kind.dart';
 import '../domain/competence.dart';
 import '../domain/entry_type.dart';
 import '../domain/entry_with_account.dart';
+import '../domain/installments.dart';
+
+part 'entries_repository_installments.dart';
 
 /// O que o formulário manda gravar. `id == null` cria; senão, atualiza.
 class EntryDraft {
@@ -19,6 +24,9 @@ class EntryDraft {
     required this.amountCents,
     required this.date,
     this.note,
+    this.installmentGroupId,
+    this.installmentNumber,
+    this.installmentCount,
   });
 
   final int? id;
@@ -34,6 +42,12 @@ class EntryDraft {
   final int amountCents;
   final DateTime date;
   final String? note;
+
+  /// Parcela de uma compra parcelada (feat 0031); quem não é parcela deixa nulo. Ao
+  /// **editar** (`id != null`), nulo significa "não mexer" (a parcela continua parcela).
+  final String? installmentGroupId;
+  final int? installmentNumber;
+  final int? installmentCount;
 }
 
 class EntriesRepository {
@@ -113,6 +127,9 @@ class EntriesRepository {
       amountCents: Value(draft.amountCents),
       date: Value(date),
       note: Value(note == null || note.isEmpty ? null : note),
+      installmentGroupId: Value.absentIfNull(draft.installmentGroupId),
+      installmentNumber: Value.absentIfNull(draft.installmentNumber),
+      installmentCount: Value.absentIfNull(draft.installmentCount),
       // Transferência segue a regra da origem — o dinheiro sai de lá.
       competence: Value(
         _competenceFor(account, date, await _monthStartDay()).key,

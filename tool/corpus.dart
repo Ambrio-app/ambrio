@@ -92,7 +92,7 @@ List<CorpusCase> loadCorpus({
       final base = file.path.substring(0, file.path.length - '.xlsx'.length);
       final expectedFile = File('$base.esperado.json');
       if (!expectedFile.existsSync()) {
-        warnings?.add('${file.path}: sem ${expectedFile.uri.pathSegments.last} — ignorada.');
+        warnings?.add('${file.path}: sem ${expectedFile.uri.pathSegments.last}; ignorada.');
         continue;
       }
       final json = jsonDecode(expectedFile.readAsStringSync()) as Map<String, Object?>;

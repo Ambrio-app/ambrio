@@ -124,6 +124,54 @@ final class EntryCountProvider
 
 String _$entryCountHash() => r'262247e7bc67075e921fb4e1645df75a04f6c7c0';
 
+/// O que ainda vai cair nos cartões em parcelas futuras (feat 0031), por cartão, em centavos.
+/// Fica **fora** do "em aberto" (que só conta até hoje); a Situação mostra à parte.
+
+@ProviderFor(futureInstallments)
+final futureInstallmentsProvider = FutureInstallmentsProvider._();
+
+/// O que ainda vai cair nos cartões em parcelas futuras (feat 0031), por cartão, em centavos.
+/// Fica **fora** do "em aberto" (que só conta até hoje); a Situação mostra à parte.
+
+final class FutureInstallmentsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Map<int, int>>,
+          Map<int, int>,
+          Stream<Map<int, int>>
+        >
+    with $FutureModifier<Map<int, int>>, $StreamProvider<Map<int, int>> {
+  /// O que ainda vai cair nos cartões em parcelas futuras (feat 0031), por cartão, em centavos.
+  /// Fica **fora** do "em aberto" (que só conta até hoje); a Situação mostra à parte.
+  FutureInstallmentsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'futureInstallmentsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$futureInstallmentsHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<Map<int, int>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<Map<int, int>> create(Ref ref) {
+    return futureInstallments(ref);
+  }
+}
+
+String _$futureInstallmentsHash() =>
+    r'2b59cad51e71f87efef1890de120714e5d483412';
+
 /// O aviso de backup da home foi dispensado (só nesta abertura do app: na
 /// próxima, se o backup continuar vencido, ele volta).
 

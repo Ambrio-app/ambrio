@@ -668,6 +668,39 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _installmentGroupIdMeta =
+      const VerificationMeta('installmentGroupId');
+  @override
+  late final GeneratedColumn<String> installmentGroupId =
+      GeneratedColumn<String>(
+        'installment_group_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _installmentNumberMeta = const VerificationMeta(
+    'installmentNumber',
+  );
+  @override
+  late final GeneratedColumn<int> installmentNumber = GeneratedColumn<int>(
+    'installment_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _installmentCountMeta = const VerificationMeta(
+    'installmentCount',
+  );
+  @override
+  late final GeneratedColumn<int> installmentCount = GeneratedColumn<int>(
+    'installment_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -680,6 +713,9 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
     note,
     competence,
     createdAt,
+    installmentGroupId,
+    installmentNumber,
+    installmentCount,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -763,6 +799,33 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('installment_group_id')) {
+      context.handle(
+        _installmentGroupIdMeta,
+        installmentGroupId.isAcceptableOrUnknown(
+          data['installment_group_id']!,
+          _installmentGroupIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('installment_number')) {
+      context.handle(
+        _installmentNumberMeta,
+        installmentNumber.isAcceptableOrUnknown(
+          data['installment_number']!,
+          _installmentNumberMeta,
+        ),
+      );
+    }
+    if (data.containsKey('installment_count')) {
+      context.handle(
+        _installmentCountMeta,
+        installmentCount.isAcceptableOrUnknown(
+          data['installment_count']!,
+          _installmentCountMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -814,6 +877,18 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      installmentGroupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}installment_group_id'],
+      ),
+      installmentNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}installment_number'],
+      ),
+      installmentCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}installment_count'],
+      ),
     );
   }
 
@@ -855,6 +930,16 @@ class Entry extends DataClass implements Insertable<Entry> {
   /// repositório, que recalcula quando o corte muda.
   final int competence;
   final DateTime createdAt;
+
+  /// Compra parcelada (feat 0031): todas as parcelas de uma mesma compra
+  /// dividem este id. Nulo em lançamento comum (e em todo lançamento anterior à v10).
+  final String? installmentGroupId;
+
+  /// Número desta parcela (1 a [installmentCount]); nulo em lançamento comum.
+  final int? installmentNumber;
+
+  /// Quantas parcelas a compra tem no total; nulo em lançamento comum.
+  final int? installmentCount;
   const Entry({
     required this.id,
     required this.accountId,
@@ -866,6 +951,9 @@ class Entry extends DataClass implements Insertable<Entry> {
     this.note,
     required this.competence,
     required this.createdAt,
+    this.installmentGroupId,
+    this.installmentNumber,
+    this.installmentCount,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -886,6 +974,15 @@ class Entry extends DataClass implements Insertable<Entry> {
     }
     map['competence'] = Variable<int>(competence);
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || installmentGroupId != null) {
+      map['installment_group_id'] = Variable<String>(installmentGroupId);
+    }
+    if (!nullToAbsent || installmentNumber != null) {
+      map['installment_number'] = Variable<int>(installmentNumber);
+    }
+    if (!nullToAbsent || installmentCount != null) {
+      map['installment_count'] = Variable<int>(installmentCount);
+    }
     return map;
   }
 
@@ -903,6 +1000,15 @@ class Entry extends DataClass implements Insertable<Entry> {
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       competence: Value(competence),
       createdAt: Value(createdAt),
+      installmentGroupId: installmentGroupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(installmentGroupId),
+      installmentNumber: installmentNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(installmentNumber),
+      installmentCount: installmentCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(installmentCount),
     );
   }
 
@@ -924,6 +1030,11 @@ class Entry extends DataClass implements Insertable<Entry> {
       note: serializer.fromJson<String?>(json['note']),
       competence: serializer.fromJson<int>(json['competence']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      installmentGroupId: serializer.fromJson<String?>(
+        json['installmentGroupId'],
+      ),
+      installmentNumber: serializer.fromJson<int?>(json['installmentNumber']),
+      installmentCount: serializer.fromJson<int?>(json['installmentCount']),
     );
   }
   @override
@@ -942,6 +1053,9 @@ class Entry extends DataClass implements Insertable<Entry> {
       'note': serializer.toJson<String?>(note),
       'competence': serializer.toJson<int>(competence),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'installmentGroupId': serializer.toJson<String?>(installmentGroupId),
+      'installmentNumber': serializer.toJson<int?>(installmentNumber),
+      'installmentCount': serializer.toJson<int?>(installmentCount),
     };
   }
 
@@ -956,6 +1070,9 @@ class Entry extends DataClass implements Insertable<Entry> {
     Value<String?> note = const Value.absent(),
     int? competence,
     DateTime? createdAt,
+    Value<String?> installmentGroupId = const Value.absent(),
+    Value<int?> installmentNumber = const Value.absent(),
+    Value<int?> installmentCount = const Value.absent(),
   }) => Entry(
     id: id ?? this.id,
     accountId: accountId ?? this.accountId,
@@ -967,6 +1084,15 @@ class Entry extends DataClass implements Insertable<Entry> {
     note: note.present ? note.value : this.note,
     competence: competence ?? this.competence,
     createdAt: createdAt ?? this.createdAt,
+    installmentGroupId: installmentGroupId.present
+        ? installmentGroupId.value
+        : this.installmentGroupId,
+    installmentNumber: installmentNumber.present
+        ? installmentNumber.value
+        : this.installmentNumber,
+    installmentCount: installmentCount.present
+        ? installmentCount.value
+        : this.installmentCount,
   );
   Entry copyWithCompanion(EntriesCompanion data) {
     return Entry(
@@ -988,6 +1114,15 @@ class Entry extends DataClass implements Insertable<Entry> {
           ? data.competence.value
           : this.competence,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      installmentGroupId: data.installmentGroupId.present
+          ? data.installmentGroupId.value
+          : this.installmentGroupId,
+      installmentNumber: data.installmentNumber.present
+          ? data.installmentNumber.value
+          : this.installmentNumber,
+      installmentCount: data.installmentCount.present
+          ? data.installmentCount.value
+          : this.installmentCount,
     );
   }
 
@@ -1003,7 +1138,10 @@ class Entry extends DataClass implements Insertable<Entry> {
           ..write('date: $date, ')
           ..write('note: $note, ')
           ..write('competence: $competence, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('installmentGroupId: $installmentGroupId, ')
+          ..write('installmentNumber: $installmentNumber, ')
+          ..write('installmentCount: $installmentCount')
           ..write(')'))
         .toString();
   }
@@ -1020,6 +1158,9 @@ class Entry extends DataClass implements Insertable<Entry> {
     note,
     competence,
     createdAt,
+    installmentGroupId,
+    installmentNumber,
+    installmentCount,
   );
   @override
   bool operator ==(Object other) =>
@@ -1034,7 +1175,10 @@ class Entry extends DataClass implements Insertable<Entry> {
           other.date == this.date &&
           other.note == this.note &&
           other.competence == this.competence &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.installmentGroupId == this.installmentGroupId &&
+          other.installmentNumber == this.installmentNumber &&
+          other.installmentCount == this.installmentCount);
 }
 
 class EntriesCompanion extends UpdateCompanion<Entry> {
@@ -1048,6 +1192,9 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
   final Value<String?> note;
   final Value<int> competence;
   final Value<DateTime> createdAt;
+  final Value<String?> installmentGroupId;
+  final Value<int?> installmentNumber;
+  final Value<int?> installmentCount;
   const EntriesCompanion({
     this.id = const Value.absent(),
     this.accountId = const Value.absent(),
@@ -1059,6 +1206,9 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     this.note = const Value.absent(),
     this.competence = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.installmentGroupId = const Value.absent(),
+    this.installmentNumber = const Value.absent(),
+    this.installmentCount = const Value.absent(),
   });
   EntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -1071,6 +1221,9 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     this.note = const Value.absent(),
     required int competence,
     this.createdAt = const Value.absent(),
+    this.installmentGroupId = const Value.absent(),
+    this.installmentNumber = const Value.absent(),
+    this.installmentCount = const Value.absent(),
   }) : accountId = Value(accountId),
        type = Value(type),
        description = Value(description),
@@ -1088,6 +1241,9 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     Expression<String>? note,
     Expression<int>? competence,
     Expression<DateTime>? createdAt,
+    Expression<String>? installmentGroupId,
+    Expression<int>? installmentNumber,
+    Expression<int>? installmentCount,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1100,6 +1256,10 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
       if (note != null) 'note': note,
       if (competence != null) 'competence': competence,
       if (createdAt != null) 'created_at': createdAt,
+      if (installmentGroupId != null)
+        'installment_group_id': installmentGroupId,
+      if (installmentNumber != null) 'installment_number': installmentNumber,
+      if (installmentCount != null) 'installment_count': installmentCount,
     });
   }
 
@@ -1114,6 +1274,9 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     Value<String?>? note,
     Value<int>? competence,
     Value<DateTime>? createdAt,
+    Value<String?>? installmentGroupId,
+    Value<int?>? installmentNumber,
+    Value<int?>? installmentCount,
   }) {
     return EntriesCompanion(
       id: id ?? this.id,
@@ -1126,6 +1289,9 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
       note: note ?? this.note,
       competence: competence ?? this.competence,
       createdAt: createdAt ?? this.createdAt,
+      installmentGroupId: installmentGroupId ?? this.installmentGroupId,
+      installmentNumber: installmentNumber ?? this.installmentNumber,
+      installmentCount: installmentCount ?? this.installmentCount,
     );
   }
 
@@ -1164,6 +1330,15 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (installmentGroupId.present) {
+      map['installment_group_id'] = Variable<String>(installmentGroupId.value);
+    }
+    if (installmentNumber.present) {
+      map['installment_number'] = Variable<int>(installmentNumber.value);
+    }
+    if (installmentCount.present) {
+      map['installment_count'] = Variable<int>(installmentCount.value);
+    }
     return map;
   }
 
@@ -1179,7 +1354,10 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
           ..write('date: $date, ')
           ..write('note: $note, ')
           ..write('competence: $competence, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('installmentGroupId: $installmentGroupId, ')
+          ..write('installmentNumber: $installmentNumber, ')
+          ..write('installmentCount: $installmentCount')
           ..write(')'))
         .toString();
   }
@@ -2628,6 +2806,9 @@ typedef $$EntriesTableCreateCompanionBuilder = EntriesCompanion Function({
   Value<String?> note,
   required int competence,
   Value<DateTime> createdAt,
+  Value<String?> installmentGroupId,
+  Value<int?> installmentNumber,
+  Value<int?> installmentCount,
 });
 typedef $$EntriesTableUpdateCompanionBuilder = EntriesCompanion Function({
   Value<int> id,
@@ -2640,6 +2821,9 @@ typedef $$EntriesTableUpdateCompanionBuilder = EntriesCompanion Function({
   Value<String?> note,
   Value<int> competence,
   Value<DateTime> createdAt,
+  Value<String?> installmentGroupId,
+  Value<int?> installmentNumber,
+  Value<int?> installmentCount,
 });
 
 final class $$EntriesTableReferences
@@ -2728,6 +2912,21 @@ class $$EntriesTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get installmentGroupId => $composableBuilder(
+    column: $table.installmentGroupId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get installmentNumber => $composableBuilder(
+    column: $table.installmentNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get installmentCount => $composableBuilder(
+    column: $table.installmentCount,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2827,6 +3026,21 @@ class $$EntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get installmentGroupId => $composableBuilder(
+    column: $table.installmentGroupId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get installmentNumber => $composableBuilder(
+    column: $table.installmentNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get installmentCount => $composableBuilder(
+    column: $table.installmentCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableOrderingComposer get accountId {
     final $$AccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2913,6 +3127,21 @@ class $$EntriesTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
+  GeneratedColumn<String> get installmentGroupId => $composableBuilder(
+    column: $table.installmentGroupId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get installmentNumber => $composableBuilder(
+    column: $table.installmentNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get installmentCount => $composableBuilder(
+    column: $table.installmentCount,
+    builder: (column) => column,
+  );
+
   $$AccountsTableAnnotationComposer get accountId {
     final $$AccountsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -2998,6 +3227,9 @@ class $$EntriesTableTableManager
                 Value<String?> note = const Value.absent(),
                 Value<int> competence = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> installmentGroupId = const Value.absent(),
+                Value<int?> installmentNumber = const Value.absent(),
+                Value<int?> installmentCount = const Value.absent(),
               }) => EntriesCompanion(
                 id: id,
                 accountId: accountId,
@@ -3009,6 +3241,9 @@ class $$EntriesTableTableManager
                 note: note,
                 competence: competence,
                 createdAt: createdAt,
+                installmentGroupId: installmentGroupId,
+                installmentNumber: installmentNumber,
+                installmentCount: installmentCount,
               ),
           createCompanionCallback:
               ({
@@ -3022,6 +3257,9 @@ class $$EntriesTableTableManager
                 Value<String?> note = const Value.absent(),
                 required int competence,
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> installmentGroupId = const Value.absent(),
+                Value<int?> installmentNumber = const Value.absent(),
+                Value<int?> installmentCount = const Value.absent(),
               }) => EntriesCompanion.insert(
                 id: id,
                 accountId: accountId,
@@ -3033,6 +3271,9 @@ class $$EntriesTableTableManager
                 note: note,
                 competence: competence,
                 createdAt: createdAt,
+                installmentGroupId: installmentGroupId,
+                installmentNumber: installmentNumber,
+                installmentCount: installmentCount,
               ),
           withReferenceMapper: (p0) => p0
               .map(

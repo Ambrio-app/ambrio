@@ -12,7 +12,7 @@ class GroqTableLocator extends OpenAiCompatibleTableLocator {
         apiKey: apiKey ?? const String.fromEnvironment('GROQ_API_KEY'),
         requireKey: true,
         missingKeyMessage:
-            'Chave da Groq não configurada — rebuilde com '
+            'Chave da Groq não configurada. Rebuilde com '
             '--dart-define=GROQ_API_KEY=...',
       );
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/database/app_database.dart';
+import '../../../core/utils/formatters.dart';
 import '../../accounts/presentation/account_label.dart';
 import '../domain/entry_filters.dart';
 import 'entry_filters_provider.dart';
@@ -124,7 +125,7 @@ class FilterSheet extends ConsumerWidget {
             Text(
               filters.accountIds.isEmpty
                   ? 'Todas. Toque para ver só algumas.'
-                  : '${filters.accountIds.length} escolhida(s).',
+                  : '${Formatters.count(filters.accountIds.length, 'escolhida', 'escolhidas')}.',
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 8),

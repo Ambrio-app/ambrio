@@ -5,7 +5,7 @@ não pede conta nem login e não tem servidor: os dados ficam no seu aparelho.
 
 ![Início, Situação e Pagar fatura do Ambrio, nos temas claro e escuro](docs/telas/hero.png)
 
-> **Status:** versão 1.0.4. É um projeto pessoal em código aberto, mantido por uma pessoa. O histórico de entregas está em
+> **Status:** versão 1.1.0 (publicada). É um projeto pessoal em código aberto, mantido por uma pessoa. O histórico de entregas está em
 > [`feat/`](feat/README.md). Em inglês: [README.en.md](README.en.md).
 
 ## O que faz
@@ -20,7 +20,7 @@ não pede conta nem login e não tem servidor: os dados ficam no seu aparelho.
 
 ## Instalar
 
-O app não está na Play Store. Baixe o `.apk` mais recente em [Releases](https://github.com/IziFnc/IziFnc/releases) e abra no celular. O Android vai
+O app não está na Play Store. Baixe o `.apk` mais recente em [Releases](https://github.com/Ambrio-app/ambrio/releases) e abra no celular. O Android vai
 pedir para permitir a instalação de "fontes desconhecidas".
 
 Antes de instalar, **confira o arquivo**: o [guia de verificação](docs/VERIFICAR.md) traz o SHA-256 de cada APK e o certificado de assinatura.

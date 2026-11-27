@@ -64,7 +64,12 @@ class EntryTile extends StatelessWidget {
       leading: Icon(icon, color: colors.onSurfaceVariant),
       title: Text(entry.description),
       subtitle: Text(
-        [Formatters.dayMonth(entry.date), where, ?entry.note].join(' · '),
+        [
+          Formatters.dayMonth(entry.date),
+          where,
+          if (entry.installmentCount != null) 'parcela ${entry.installmentNumber}/${entry.installmentCount}',
+          ?entry.note,
+        ].join(' · '),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),

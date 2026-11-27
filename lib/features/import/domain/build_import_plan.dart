@@ -53,13 +53,23 @@ List<String> importNotes(ParsedSheetData parsed, List<ImportPlanRow> plan) {
   final semCartao = plan.where((p) => p.row.cardUnknown).length;
   return [
     if (unchecked > 0)
-      '$unchecked vieram desmarcada(s) para você revisar (já importada antes, ou data muito longe do mês da aba).',
+      '${unchecked == 1 ? '1 veio desmarcada' : '$unchecked vieram desmarcadas'} para você revisar (já importada antes, ou data muito longe do mês da aba).',
     if (parcelas > 0)
-      '$parcelas parcela(s) estavam com a data da compra original e foram trazidas para o mês da aba (a data da compra fica na observação).',
-    if (undated > 0) '$undated linha(s) estavam sem data na planilha e entram com a última data da aba.',
-    if (semCartao > 0) '$semCartao fatura(s) sem o cartão na planilha usam o cartão escolhido no passo anterior.',
+      parcelas == 1
+          ? '1 parcela estava com a data da compra original e foi trazida para o mês da aba (a data da compra fica na observação).'
+          : '$parcelas parcelas estavam com a data da compra original e foram trazidas para o mês da aba (a data da compra fica na observação).',
+    if (undated > 0)
+      undated == 1
+          ? '1 linha estava sem data na planilha e entra com a última data da aba.'
+          : '$undated linhas estavam sem data na planilha e entram com a última data da aba.',
+    if (semCartao > 0)
+      semCartao == 1
+          ? '1 fatura sem o cartão na planilha usa o cartão escolhido no passo anterior.'
+          : '$semCartao faturas sem o cartão na planilha usam o cartão escolhido no passo anterior.',
     if (parsed.mirrorsConsumed > 0)
-      '${parsed.mirrorsConsumed} transferência(s) apareciam duas vezes (saída e entrada) e entram uma vez só.',
+      parsed.mirrorsConsumed == 1
+          ? '1 transferência aparecia duas vezes (saída e entrada) e entra uma vez só.'
+          : '${parsed.mirrorsConsumed} transferências apareciam duas vezes (saída e entrada) e entram uma vez só.',
     'Tabelas de gastos recorrentes ainda não são importadas.',
   ];
 }
@@ -112,13 +122,13 @@ Future<ImportPlan> buildImportPlan({
     final toAccountId = destinoKey == null ? null : mapped[destinoKey];
 
     if (accountId == null || (destinoKey != null && toAccountId == null)) {
-      errors.add('Linha ${row.sheetRow} ("${row.nome}"): conta ou cartão sem mapeamento — ignorada.');
+      errors.add('Linha ${row.sheetRow} ("${row.nome}"): conta ou cartão sem mapeamento; ignorada.');
       continue;
     }
     if (toAccountId != null && toAccountId == accountId) {
       errors.add(
         'Linha ${row.sheetRow} ("${row.nome}"): origem e destino foram '
-        'mapeados para a mesma conta — ignorada.',
+        'mapeados para a mesma conta; ignorada.',
       );
       continue;
     }

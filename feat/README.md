@@ -39,11 +39,23 @@ e **como conferir** que funciona.
 | [0035](0035-tamanho-arquivos.md) | Limite de tamanho de arquivos no CI (400 em `lib/`, 500 em `test/`) e divisão dos oito arquivos que passavam | 2026-10-23 | ✅ concluído |
 | [0038](0038-juridico.md) | Privacidade e consentimento dentro do app: política em PT-BR, autorização específica antes de enviar texto à IA (revogável, versionada), licenças dos pacotes e aviso legal; migração v8→v9 | 2026-10-25 | ✅ concluído |
 | [0039](0039-publico.md) | O que o público enxerga: `SECURITY.md`, guia para conferir o APK (SHA-256 e certificado), Dependabot e `.mcp.json` fora do git | 2026-10-25 | ✅ concluído |
-| [0042](0042-ux-1-0-3.md) | UX da 1.0.3: Situação em tela, Pagar fatura em tela própria e acertos dos júris | 2026-11-11 | 🚧 em andamento |
-| [0043](0043-marca-e-vitrine.md) | Marca "Tinta & âmbar", nome novo e vitrine do projeto (1.0.4) | 2026-11-16 | 🚧 em andamento |
+| [0042](0042-ux-1-0-3.md) | UX da 1.0.3: Situação em tela, Pagar fatura em tela própria e acertos dos júris | 2026-11-11 | ✅ concluído |
+| [0043](0043-marca-e-vitrine.md) | Marca "Tinta & âmbar", nome novo e vitrine do projeto (1.0.4) | 2026-11-16 | ✅ concluído |
 | [0044](0044-textos-e-planilhas.md) | Revisão de textos e teste do importador com planilhas diferentes (1.0.4) | 2026-11-16 | ✅ concluído |
 | [0045](0045-vitrine.md) | Vitrine: README de estudo de caso, capturas e resumo em inglês (1.0.4) | 2026-11-17 | ✅ concluído |
 | [0046](0046-guia-foco.md) | Guia: foco que fecha sem sustos (1.0.4) | 2026-11-17 | ✅ concluído |
+| [0047](0047-cores.md) | Cores de verdade da logo (1.0.4) | 2026-11-17 | ✅ concluído |
+| [0048](0048-olhinho.md) | O olhinho dos saldos (1.0.4) | 2026-11-17 | ✅ concluído |
+| [0049](0049-importacao-resumo.md) | Importação em resumo, com "Ver mais detalhes" (1.0.4) | 2026-11-17 | ✅ concluído |
+| [0050](0050-painel.md) | Painel na tela inicial (1.0.4) | 2026-11-17 | ✅ concluído |
+| [0051](0051-cores-v2.md) | Mais âmbar: cores v2 (1.0.4) | 2026-11-18 | ✅ concluído |
+| [0052](0052-alto-contraste.md) | Alto contraste que se vê (1.0.4) | 2026-11-18 | ✅ concluído |
+| [0053](0053-meses-por-gesto.md) | Passar os meses por gesto (1.0.4) | 2026-11-18 | ✅ concluído |
+| [0054](0054-painel-claro.md) | Painel da tela inicial mais claro: legenda da barra, cartões com o em aberto e título da lista | 2026-11-24 | ✅ concluído |
+| [0055](0055-padroes.md) | Padrões de texto e símbolos: sem travessão, sem "(s)", ícone do cartão em contorno e `docs/PADROES.md` | 2026-11-24 | ✅ concluído |
+| [0031](0031-parcelamento.md) | Compra parcelada no cartão: campo Parcelas, uma parcela por fatura, "Parcelas a vencer" na Situação (banco v10) | 2026-11-24 | ✅ concluído |
+| [0030](0030-relatorio-pdf.md) | Relatório do mês em PDF (Configurações › Dados): totais por padrão, lista e saldos opcionais | 2026-11-25 | ✅ concluído |
+| [0027](0027-juros-percentual.md) | Pagar fatura com juros em %: seletor R$ ou %, valor calculado ao vivo sobre o em aberto | 2026-11-25 | ✅ concluído |
 
 ## Backlog
 
@@ -52,11 +64,8 @@ Próximas entregas, **em ordem**. Cada uma pequena e fechada antes da seguinte.
 | # | Entrega | Por que nesta posição |
 |---|---------|------|
 | — | ✅ **`v1.0.0`** publicado no GitHub Releases (APK arm64 assinado, 2026-09-26). Fim do ciclo pré-1.0: dali em diante, evolução contínua pelo backlog numerado abaixo, sem mais "release candidate". | — |
-| 0027 | Pagar fatura em % de juros (hoje só aceita a diferença em R$) | Achado testando a 0025 no emulador: a fatura do banco vem em taxa (ex.: "2,5% a.m."), não em reais; quem paga tem que fazer a conta de cabeça. Pequeno. |
 | 0028 | Atalho direto para "Pagar fatura" a partir do próprio cartão (folha de situação) | Mesmo teste: hoje tocar no cartão só filtra a lista; "Pagar fatura" está escondido na grade do "+" junto com Despesa/Entrada/Transferência. |
 | 0029 | Importar todas as abas de uma vez | Hoje é uma aba por vez; ajuda quem tem o ano inteiro na mesma planilha. (1.1+) |
-| 0030 | Exportar relatório do mês | Para o agente externo de análise que o autor já usa. (1.1+) |
-| 0031 | Parcelamento de compras e de fatura | Na planilha, as parcelas são linhas repetidas mês a mês; parcelas futuras servem aos dois. (1.1+) |
 | 0032 | Recorrentes (inclui importar a tabela "Gastos Recorrentes") | Mesma lógica: dá para importar como lançamentos simples antes. (1.1+) |
 | 0036 | Nota da prévia da importação só para o que o app desmarcou | Achado no roteiro do 1.0.1: `importNotes` conta qualquer linha desmarcada e diz "vieram desmarcadas para você revisar (já importada antes, ou data longe do mês)", inclusive as que a pessoa acabou de desmarcar. Vem da 0025. Pequeno.
 | 0037 | Conta dona do cartão pré-selecionada ao cadastrar o primeiro cartão | Achado no mesmo roteiro: o tour diz que o cartão "fica ligado à conta que você acabou de criar", mas o chip da conta vem sem seleção. Com uma conta só, selecionar sozinha (como o formulário de lançamento já faz). Pequeno.

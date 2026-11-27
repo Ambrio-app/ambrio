@@ -152,7 +152,7 @@ void main() {
     expect(tile('Salário'), findsNothing);
     expect(tile('Mercado'), findsOneWidget);
     expect(tile('Mouse'), findsOneWidget);
-    expect(find.text('Mostrando 2 de 3 lançamento(s)'), findsOneWidget);
+    expect(find.text('Mostrando 2 de 3 lançamentos'), findsOneWidget);
     expect(
       find.textContaining('Entrou ${Formatters.money(500000)}'),
       findsOneWidget,
@@ -204,7 +204,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Nenhum lançamento com esses filtros.'), findsOneWidget);
-    expect(find.text('Mostrando 0 de 3 lançamento(s)'), findsOneWidget);
+    expect(find.text('Mostrando 0 de 3 lançamentos'), findsOneWidget);
     expect(find.text('Limpar filtros'), findsOneWidget);
   });
 
@@ -219,7 +219,7 @@ void main() {
     expect(tile('Mouse'), findsOneWidget);
     expect(tile('Mercado'), findsNothing);
     expect(tile('Salário'), findsNothing);
-    expect(find.text('Mostrando 1 de 3 lançamento(s)'), findsOneWidget);
+    expect(find.text('Mostrando 1 de 3 lançamentos'), findsOneWidget);
     expect(find.descendant(of: find.byType(Badge), matching: find.text('1')), findsOneWidget);
   });
 
@@ -241,7 +241,7 @@ void main() {
   testWidgets('trocar de mês zera os filtros', (tester) async {
     await pumpHome(tester);
     await pickKind(tester, 'Despesas');
-    expect(find.text('Mostrando 2 de 3 lançamento(s)'), findsOneWidget);
+    expect(find.text('Mostrando 2 de 3 lançamentos'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Mês anterior'));
     await tester.pumpAndSettle();
@@ -263,10 +263,10 @@ void main() {
         findsOneWidget,
         reason: '17.999 de 500.000: o gasto em percentual do que entrou',
       );
-      expect(
-        find.text('Entrou ${Formatters.money(500000)} · Gastou ${Formatters.money(5000 + 12999)}'),
-        findsOneWidget,
-      );
+      // A legenda da barra: o que gastou à esquerda e o que entrou à direita.
+      expect(find.text('Entrou ${Formatters.money(500000)}'), findsOneWidget);
+      expect(find.text('Gastou ${Formatters.money(5000 + 12999)}'), findsOneWidget);
+      expect(find.text('Lançamentos de novembro de 2026'), findsOneWidget);
       expect(find.text('Bradesco'), findsNothing, reason: 'o detalhe por conta fica na tela de situação');
       expect(find.text('Situação'), findsNothing);
     });
@@ -298,7 +298,7 @@ void main() {
       expect(find.text('Situação'), findsNothing, reason: 'voltou ao mês');
       expect(tile('Mouse'), findsNothing, reason: 'o cartão Amazon saiu da lista');
       expect(tile('Mercado'), findsOneWidget);
-      expect(find.text('Mostrando 2 de 3 lançamento(s)'), findsOneWidget);
+      expect(find.text('Mostrando 2 de 3 lançamentos'), findsOneWidget);
     });
 
     testWidgets('as linhas da tela de situação têm ao menos 48 dp de altura (alvo de toque)', (tester) async {
